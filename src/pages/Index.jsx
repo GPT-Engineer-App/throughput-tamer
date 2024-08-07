@@ -3,13 +3,16 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Cat, Heart, Info, Paw, Award } from "lucide-react";
+import { Cat, Heart, Info, Paw, Award, Star } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
+import { Badge } from "@/components/ui/badge";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 
 const Index = () => {
   const [likes, setLikes] = useState(0);
   const [currentCatIndex, setCurrentCatIndex] = useState(0);
   const [progress, setProgress] = useState(13);
+  const [funFact, setFunFact] = useState("");
 
   const catImages = [
     "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Cat03.jpg/1200px-Cat03.jpg",
@@ -17,10 +20,22 @@ const Index = () => {
     "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bb/Kittyply_edit1.jpg/1200px-Kittyply_edit1.jpg",
   ];
 
+  const funFacts = [
+    "Cats sleep for about 70% of their lives.",
+    "A group of cats is called a clowder.",
+    "Cats have over 20 vocalizations, including the purr.",
+    "The first cat in space was French. She was named Felicette.",
+    "Cats can jump up to six times their length.",
+  ];
+
   useEffect(() => {
     const timer = setTimeout(() => setProgress(66), 500);
     return () => clearTimeout(timer);
   }, []);
+
+  useEffect(() => {
+    setFunFact(funFacts[Math.floor(Math.random() * funFacts.length)]);
+  }, [currentCatIndex]);
 
   const nextCat = () => {
     setCurrentCatIndex((prevIndex) => (prevIndex + 1) % catImages.length);
@@ -63,7 +78,7 @@ const Index = () => {
           />
         </AnimatePresence>
         
-        <div className="flex justify-center gap-4 mb-12">
+        <div className="flex justify-center gap-4 mb-6">
           <Button 
             variant="outline" 
             size="lg" 
@@ -83,6 +98,18 @@ const Index = () => {
             Next Cat
           </Button>
         </div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="text-center mb-12"
+        >
+          <Badge variant="secondary" className="text-lg p-2">
+            <Star className="h-4 w-4 inline mr-2" />
+            Fun Fact: {funFact}
+          </Badge>
+        </motion.div>
 
         <Card className="mb-12">
           <CardHeader>
@@ -131,13 +158,23 @@ const Index = () => {
                 <CardDescription>Some well-known cat breeds around the world</CardDescription>
               </CardHeader>
               <CardContent>
-                <ul className="list-disc pl-6 space-y-2">
-                  <li>Siamese</li>
-                  <li>Persian</li>
-                  <li>Maine Coon</li>
-                  <li>Bengal</li>
-                  <li>British Shorthair</li>
-                </ul>
+                <Carousel className="w-full max-w-xs mx-auto">
+                  <CarouselContent>
+                    {["Siamese", "Persian", "Maine Coon", "Bengal", "British Shorthair"].map((breed, index) => (
+                      <CarouselItem key={index}>
+                        <div className="p-1">
+                          <Card>
+                            <CardContent className="flex aspect-square items-center justify-center p-6">
+                              <span className="text-3xl font-semibold">{breed}</span>
+                            </CardContent>
+                          </Card>
+                        </div>
+                      </CarouselItem>
+                    ))}
+                  </CarouselContent>
+                  <CarouselPrevious />
+                  <CarouselNext />
+                </Carousel>
               </CardContent>
             </Card>
           </TabsContent>
